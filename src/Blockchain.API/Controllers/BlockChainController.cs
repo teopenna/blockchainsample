@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Blockchain.API.Controllers
 {
+    [Produces("application/json")]
     [Route("api/blockchain")]
     public class BlockChainController : Controller
     {

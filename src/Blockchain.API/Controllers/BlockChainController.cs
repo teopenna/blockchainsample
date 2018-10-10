@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Blockchain.API.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace Blockchain.API.Controllers
 {
@@ -11,16 +9,38 @@ namespace Blockchain.API.Controllers
     [Route("api/blockchain")]
     public class BlockChainController : Controller
     {
-        private BlockChain _blockChain;
+        private IBlockChain _blockChain;
 
-        public BlockChainController(BlockChain blockChain)
+        public BlockChainController(IBlockChain blockChain)
         {
             _blockChain = blockChain ?? throw new ArgumentNullException(nameof(blockChain), "A valid BlockChain must be supplied.");
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        public IActionResult GetBlockChain()
         {
-            return View();
+            return Ok(_blockChain);
+        }
+
+        [HttpPut("{blockId}")]
+        public IActionResult MineBlock(int blockId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                _blockChain.MineBlock(blockId);
+
+                return Ok(_blockChain);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }

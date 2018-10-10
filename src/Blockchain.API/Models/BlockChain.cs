@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Blockchain.API.Models
 {
-    public class BlockChain
+    public class BlockChain : IBlockChain
     {
         public LinkedList<Block> Chain { get; private set; }
 
@@ -15,6 +15,27 @@ namespace Blockchain.API.Models
 
             Chain = new LinkedList<Block>();
             Chain.AddFirst(firstBlock);
+        }
+
+        public void MineBlock(int blockId)
+        {
+            var blockToBeMined = Chain.FirstOrDefault(b => b.Id == blockId);
+            if (blockToBeMined == null)
+            {
+                throw new ApplicationException($"Block with id {blockId} not found!");
+            }
+
+            var blockHash = blockToBeMined.MineBlock(2);
+
+            if (blockToBeMined.IsMined)
+            {
+                var blockList = Chain.Find(blockToBeMined);
+                if (blockList.Next == null)
+                {
+                    var newBlock = new Block(blockId + 1, blockHash);
+                    Chain.AddAfter(blockList, newBlock);
+                }
+            }
         }
     }
 }
